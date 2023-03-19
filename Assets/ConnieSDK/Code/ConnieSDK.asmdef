@@ -1,7 +1,9 @@
 {
     "name": "ConnieSDK",
     "rootNamespace": "ConnieSDK",
-    "references": [],
+    "references": [
+        "GUID:589992a4964871341bbbc37d901bd372"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

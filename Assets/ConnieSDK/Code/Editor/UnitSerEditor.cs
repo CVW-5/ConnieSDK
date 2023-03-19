@@ -59,7 +59,7 @@ namespace ConnieSDK.Editor
             if(!newDir.Equals(OutputDir))
             {
                 OutputDir = newDir;
-                UnitSerializer.SetAssetDirectory(OutputDir);
+                ConnieSerializer.SetAssetDirectory(OutputDir);
                 return;
             }
 
@@ -84,8 +84,8 @@ namespace ConnieSDK.Editor
 
             if(serialize && selectedPrefab is not null)
             {
-                UnitSerializer.SetAssetDirectory(OutputDir);
-                UnitSerializer.SerializeUnit(selectedPrefab, outputName);
+                ConnieSerializer.SetAssetDirectory(OutputDir);
+                ConnieSerializer.SerializeUnit(selectedPrefab, outputName);
             }
         }
 

@@ -1,0 +1,14 @@
+{
+    "name": "ConnieSDK.Components",
+    "rootNamespace": "ConnieSDK.Components",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -7,7 +7,7 @@ using UnityEngine;
 #nullable enable
 namespace ConnieSDK
 {
-    public static class UnitSerializer
+    public static class ConnieSerializer
     {
         public static string AssetDirectory { get; private set; } =
             Path.Join(Environment.CurrentDirectory, "Assets");
@@ -15,8 +15,8 @@ namespace ConnieSDK
             new Dictionary<string, string>
             {
                 {"Unit","zip" },
-                {"MapData", "cwm" },
-                {"Stores","cws" },
+                {"MapData", "zip" },
+                {"Stores","zip" },
             };
 
         public static void SetAssetDirectory (string path)
