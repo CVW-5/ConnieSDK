@@ -1,14 +1,20 @@
 {
     "name": "ConnieSDK-Editor",
     "rootNamespace": "ConnieSDK.Editor",
-    "references": [],
-    "includePlatforms": [],
+    "references": [
+        "GUID:5f42024c77c5aa7468295904c1947a2c"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": [],
+    "defineConstraints": [
+        "UNITY_EDITOR"
+    ],
     "versionDefines": [],
     "noEngineReferences": false
 }
