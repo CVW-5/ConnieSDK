@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using UnityEngine;
 
 #nullable enable
@@ -20,10 +21,10 @@ namespace ConnieSDK
             if (!File.Exists(filepath) && !createIfNotExists)
                 return;
 
-            CreateArchive(filepath, false);
+            OpenArchive(filepath, false);
         }
 
-        public ArchiveWrapper CreateArchive(string filepath, bool includeArtifact = false)
+        public ArchiveWrapper OpenArchive(string filepath, bool includeArtifact = false)
         {
             Filepath = filepath;
             string dir = Path.GetDirectoryName(Filepath);
@@ -32,9 +33,19 @@ namespace ConnieSDK
                 new DirectoryInfo(dir).Create();
 
             rootStream = File.Open(filepath, FileMode.OpenOrCreate);
-            Archive = new ZipArchive(rootStream, ZipArchiveMode.Update);
+            Archive = new ZipArchive(rootStream, ZipArchiveMode.Update, true);
+
+            if(includeArtifact)
+            {
+                Archive.CreateEntry("EmptyAsset");
+            }
 
             return this;
+        }
+
+        public string[] EntryNames
+        {
+            get => Archive?.Entries.Select(x => x.Name).ToArray() ?? new string[0];
         }
 
         public bool HasEntry(string name)
@@ -75,6 +86,7 @@ namespace ConnieSDK
 
             entWriter.Write(data);
             entStream.SetLength(data.Length);
+            entStream.Flush();
         }
 
         public void DeleteEntry (string name)
@@ -85,9 +97,8 @@ namespace ConnieSDK
 
         public void Dispose()
         {
-            rootStream?.Dispose();
-
             Archive?.Dispose();
+            rootStream?.Dispose();
         }
     }
 }
