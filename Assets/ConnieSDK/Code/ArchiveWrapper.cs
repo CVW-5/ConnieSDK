@@ -1,4 +1,4 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -7,27 +7,42 @@ using UnityEngine;
 #nullable enable
 namespace ConnieSDK
 {
-    public class ArchiveWrapper
+    public class ArchiveWrapper: IDisposable
     {
         public string Filepath = string.Empty;
 
         public bool Loaded => Archive is ZipArchive;
         private ZipArchive? Archive;
         private Stream? rootStream;
-        private StreamWriter? _writer;
-        private StreamReader? _reader;
 
-        public ArchiveWrapper (string filepath)
+        public ArchiveWrapper(string filepath, bool createIfNotExists = true)
         {
-            if (!File.Exists(filepath)) return;
+            if (!File.Exists(filepath) && !createIfNotExists)
+                return;
 
-            Filepath = filepath;
-            rootStream = File.Open(Filepath, FileMode.Open);
-
-            Archive = new ZipArchive(rootStream, ZipArchiveMode.Update);
+            CreateArchive(filepath, false);
         }
 
-        public bool ReadEntry (string name, out string data)
+        public ArchiveWrapper CreateArchive(string filepath, bool includeArtifact = false)
+        {
+            Filepath = filepath;
+            string dir = Path.GetDirectoryName(Filepath);
+
+            if (!Directory.Exists(dir))
+                new DirectoryInfo(dir).Create();
+
+            rootStream = File.Open(filepath, FileMode.OpenOrCreate);
+            Archive = new ZipArchive(rootStream, ZipArchiveMode.Update);
+
+            return this;
+        }
+
+        public bool HasEntry(string name)
+        {
+            return Archive?.GetEntry(name) is ZipArchiveEntry;
+        }
+
+        public bool ReadEntry(string name, out string data)
         {
             data = string.Empty;
 
@@ -45,7 +60,7 @@ namespace ConnieSDK
             return true;
         }
 
-        public void WriteEntry (string name, string data)
+        public void WriteEntry(string name, string data)
         {
             if (Archive is null)
                 throw new FileLoadException("The archive is not loaded! It either doesn't exist or wasn't loaded properly.");
@@ -62,10 +77,14 @@ namespace ConnieSDK
             entStream.SetLength(data.Length);
         }
 
-        public void Dispose ()
+        public void DeleteEntry (string name)
         {
-            _writer?.Dispose();
-            _reader?.Dispose();
+            if(Archive?.GetEntry(name) is ZipArchiveEntry ent)
+                ent.Delete();
+        }
+
+        public void Dispose()
+        {
             rootStream?.Dispose();
 
             Archive?.Dispose();
