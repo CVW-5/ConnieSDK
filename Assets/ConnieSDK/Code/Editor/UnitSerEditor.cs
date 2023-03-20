@@ -4,6 +4,7 @@ using UnityEditor;
 #nullable enable
 namespace ConnieSDK.Editor
 {
+    [EditorWindowTitle(title ="ConnieSDK Object Serialization")]
     public class UnitSerEditor : EditorWindow
     {
         public static UnitSerEditor? Window { get; protected set; }
@@ -21,25 +22,19 @@ namespace ConnieSDK.Editor
         }
 
         public static GameObject? selectedPrefab { get; protected set; }
+        public static ObjectType type = ObjectType.Generic;
         public static string outputName = string.Empty;
 
-        [MenuItem("Window/Unit Serializer")]
+        [MenuItem("Window/ConnieSDK/Object Serializer")]
         static void Init()
         {
             Window = (UnitSerEditor)GetWindow(typeof(UnitSerEditor));
             Window.Show();
         }
 
-        private void OnEnable()
-        {
-            if (Window is null) return;
-
-            Window.titleContent = new GUIContent("Unit Serializing");
-        }
-
         private void OnGUI()
         {
-            if(Settings is null)
+            if (Settings is null)
             {
                 Settings = FindSettings();
             }
@@ -48,6 +43,7 @@ namespace ConnieSDK.Editor
 
             string newDir = EditorGUILayout.DelayedTextField("Output Directory", OutputDir);
             GameObject newselection = (GameObject)EditorGUILayout.ObjectField("Prefab", selectedPrefab, typeof(GameObject), true);
+            type = (ObjectType)EditorGUILayout.EnumPopup("Object Type", type);
 
             EditorGUILayout.Space(10, true);
 
@@ -56,40 +52,40 @@ namespace ConnieSDK.Editor
             string newName = GUILayout.TextField(outputName, GUILayout.MinWidth(50));
             EditorGUILayout.EndHorizontal();
 
-            if(!newDir.Equals(OutputDir))
+            if (!newDir.Equals(OutputDir))
             {
                 OutputDir = newDir;
                 ConnieSerializer.SetAssetDirectory(OutputDir);
                 return;
             }
 
-            if(newselection is GameObject go && !go.Equals(selectedPrefab))
+            if (newselection is GameObject go && !go.Equals(selectedPrefab))
             {
                 outputName = go.name;
                 selectedPrefab = newselection;
                 return;
             }
-            else if(newselection is null)
+            else if (newselection is null)
             {
                 outputName = string.Empty;
                 selectedPrefab = newselection;
                 return;
             }
 
-            if(!newName.Equals(outputName))
+            if (!newName.Equals(outputName))
             {
                 outputName = newName;
                 return;
             }
 
-            if(serialize && selectedPrefab is not null)
+            if (serialize && selectedPrefab is not null)
             {
                 ConnieSerializer.SetAssetDirectory(OutputDir);
-                ConnieSerializer.SerializeUnit(selectedPrefab, outputName);
+                ConnieSerializer.SerializeObject(selectedPrefab, ObjectType.Generic, outputName);
             }
         }
 
-        protected static UnitSerSettings FindSettings ()
+        protected static UnitSerSettings FindSettings()
         {
             if (AssetDatabase.LoadMainAssetAtPath("Assets/ConnieSDK/UnitSerSettings.asset") is UnitSerSettings uss)
             {
