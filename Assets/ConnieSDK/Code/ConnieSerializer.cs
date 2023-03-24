@@ -38,6 +38,8 @@ namespace ConnieSDK
             WriteIndented = true,
             NumberHandling = JsonNumberHandling.AllowReadingFromString,
             IncludeFields = true,
+            IgnoreReadOnlyFields = true,
+            IgnoreReadOnlyProperties = true,
         };
 
         public static void SetAssetDirectory(string path)
