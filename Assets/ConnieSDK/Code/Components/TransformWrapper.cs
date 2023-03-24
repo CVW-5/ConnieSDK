@@ -17,7 +17,7 @@ namespace ConnieSDK.Components
         public Vector3Json Scale;
 
         [JsonInclude]
-        public string[] Components;
+        public WrappedComponent[] Components;
 
         [JsonInclude]
         public TransformWrapper[] Children;
@@ -36,37 +36,22 @@ namespace ConnieSDK.Components
             Children = CollectChildren(original, maxDepth - 1, includeEmpty);
         }
 
-        private string[] CollectComponents(Transform original, bool logInvalid = false)
+        private WrappedComponent[] CollectComponents(Transform original, bool logInvalid = false)
         {
             Component[] comps = original.GetComponents(typeof(Component));
-            List<string> validComps = new List<string>();
+            List<WrappedComponent> validComps = new List<WrappedComponent>();
 
             foreach (Component c in comps)
             {
-                if(IsValidComponent(c))
+                WrappedComponent? wrappedComponent = ComponentWrapper.Wrap(c);
+
+                if(wrappedComponent is not null)
                 {
-                    validComps.Add(c.GetType().Name);
+                    validComps.Add(wrappedComponent);
                 }
             }
 
             return validComps.ToArray();
-        }
-
-        /// <summary>
-        /// Checks if a component can be serialized in the Components field. Transform components are ignored.
-        /// </summary>
-        /// <param name="comp"></param>
-        /// <returns></returns>
-        public static bool IsValidComponent(Component comp)
-        {
-            return comp switch
-            {
-                Light
-                or Collider
-                or AudioSource
-                => true,
-                _ => false
-            };
         }
 
         private TransformWrapper[] CollectChildren(Transform original, int maxDepth, bool includeEmpty)
