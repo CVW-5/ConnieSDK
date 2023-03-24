@@ -10,11 +10,11 @@ namespace ConnieSDK.Components
         [JsonInclude]
         public string Name;
         [JsonInclude]
-        public Vector3Json Position;
+        public Vector3 Position;
         [JsonInclude]
-        public QuaternionJson Rotation;
+        public Quaternion Rotation;
         [JsonInclude]
-        public Vector3Json Scale;
+        public Vector3 Scale;
 
         [JsonInclude]
         public WrappedComponent[] Components;
@@ -28,9 +28,9 @@ namespace ConnieSDK.Components
         public TransformWrapper(Transform original, int maxDepth = 5, bool isRoot = false, bool includeEmpty = false)
         {
             Name = original.name;
-            Position = new Vector3Json(isRoot ? Vector3.zero : original.localPosition);
-            Rotation = new QuaternionJson(isRoot ? Quaternion.identity : original.localRotation);
-            Scale = new Vector3Json(1, 1, 1);
+            Position = isRoot ? Vector3.zero : original.localPosition;
+            Rotation = isRoot ? Quaternion.identity : original.localRotation;
+            Scale = new Vector3(1, 1, 1);
 
             Components = CollectComponents(original, false);
             Children = CollectChildren(original, maxDepth - 1, includeEmpty);
