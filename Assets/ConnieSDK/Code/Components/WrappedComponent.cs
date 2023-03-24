@@ -1,8 +1,12 @@
 using System.Collections;
-using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace ConnieSDK
 {
+    [JsonDerivedType(typeof(LightJson), "Light")]
+    [JsonDerivedType(typeof(ColliderJson), "Collider")]
+    [JsonDerivedType(typeof(AudioJson), "Audio")]
+    [JsonDerivedType(typeof(MeshRendererJson), "Mesh")]
     public abstract class WrappedComponent
     {
         public class LightJson : WrappedComponent
