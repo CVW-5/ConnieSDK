@@ -7,6 +7,8 @@ namespace ConnieSDK.Editor
     public class UnitSerSettings : ScriptableObject
     {
         public string OutputDir;
-        
+
+        public Material[] CommonMaterials;
+        public Mesh[] CommonMeshes;
     }
 }
