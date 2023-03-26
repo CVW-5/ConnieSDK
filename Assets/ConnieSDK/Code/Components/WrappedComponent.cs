@@ -1,0 +1,127 @@
+using System.Collections;
+using System.Text.Json.Serialization;
+using UnityEngine;
+
+#nullable enable
+namespace ConnieSDK
+{
+    [JsonDerivedType(typeof(LightJson), "Light")]
+    [JsonDerivedType(typeof(ColliderJson), "Collider")]
+    [JsonDerivedType(typeof(AudioJson), "Audio")]
+    [JsonDerivedType(typeof(MeshRendererJson), "Mesh")]
+    public abstract class WrappedComponent
+    {
+        public static WrappedComponent? Auto (Component comp)
+        {
+            return comp switch
+            {
+                Light l => new LightJson(l),
+                Collider c and not MeshCollider => new ColliderJson(c),
+                AudioSource audio => new AudioJson(audio),
+                MeshRenderer mesh => new MeshRendererJson(mesh),
+                _ => null
+            };
+        }
+
+        public abstract void Attach(Transform to);
+
+        public class LightJson : WrappedComponent
+        {
+            public LightType Type;
+            public Color Color;
+            public float Radius;
+            public float Intensity;
+
+            public LightJson(Light l)
+            {
+                Type = l.type;
+                Color = l.color;
+                Radius = l.range;
+                Intensity = l.intensity;
+            }
+
+            [JsonConstructor]
+            public LightJson(LightType Type, Color Color, float Radius, float Intensity)
+            {
+                this.Type = Type;
+                this.Color = Color;
+                this.Radius = Radius;
+                this.Intensity = Intensity;
+            }
+
+            public override void Attach(Transform to)
+            {
+                Light l = (Light)to.gameObject.AddComponent(typeof(Light));
+
+                l.type = Type;
+                l.color = Color;
+                l.range = Radius;
+                l.intensity = Intensity;
+            }
+        }
+
+        public class ColliderJson: WrappedComponent
+        {
+            public ColliderJson(Collider c)
+            {
+
+            }
+
+            [JsonConstructor]
+            public ColliderJson()
+            {
+
+            }
+
+            public override void Attach(Transform to)
+            {
+                //throw new System.NotImplementedException();
+                Debug.LogError("Unable to Deserialize a collider - they're not yet implemented");
+            }
+        }
+
+        public class AudioJson: WrappedComponent
+        {
+            public AudioClip? Clip;
+
+            public AudioJson(AudioSource a)
+            {
+
+            }
+
+            [JsonConstructor]
+            public AudioJson(AudioClip? Clip)
+            {
+                this.Clip = Clip;
+            }
+
+            public override void Attach(Transform to)
+            {
+                throw new System.NotImplementedException();
+            }
+        }
+
+        public class MeshRendererJson: WrappedComponent
+        {
+            public Mesh? BaseMesh;
+
+            public MeshRendererJson (MeshRenderer mr)
+            {
+
+            }
+
+            [JsonConstructor]
+            public MeshRendererJson(Mesh? BaseMesh)
+            {
+                this.BaseMesh = BaseMesh;
+            }
+
+            public override void Attach(Transform to)
+            {
+                MeshFilter mf = (MeshFilter)to.gameObject.AddComponent(typeof(MeshFilter));
+                MeshRenderer mr = (MeshRenderer)to.gameObject.AddComponent(typeof(MeshRenderer));
+                Debug.LogWarning($"Attached a MeshRenderer to {to.name} during deserialization, but there is no mesh handling yet!");
+            }
+        }
+    }
+}
