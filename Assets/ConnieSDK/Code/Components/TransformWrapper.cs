@@ -43,7 +43,7 @@ namespace ConnieSDK.Components
 
             foreach (Component c in comps)
             {
-                WrappedComponent? wrappedComponent = ComponentWrapper.Wrap(c);
+                WrappedComponent? wrappedComponent = WrappedComponent.Auto(c);
 
                 if(wrappedComponent is not null)
                 {
