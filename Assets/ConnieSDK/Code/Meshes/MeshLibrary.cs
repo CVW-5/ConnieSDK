@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+#nullable enable
 namespace ConnieSDK
 {
     public static class MeshLibrary
@@ -20,9 +21,16 @@ namespace ConnieSDK
             return mc;
         }
 
-        public static MeshCollection GetCollection (string name)
+        public static MeshCollection? GetCollection (string name)
         {
-            return collections[name];
+            try
+            {
+                return collections[name];
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public static Mesh GetMesh (string collection, string name)

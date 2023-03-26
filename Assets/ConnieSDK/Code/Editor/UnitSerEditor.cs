@@ -81,7 +81,7 @@ namespace ConnieSDK.Editor
             if (serialize && selectedPrefab is not null)
             {
                 ConnieSerializer.SetAssetDirectory(OutputDir);
-                ConnieSerializer.SerializeObject(selectedPrefab, ObjectType.Generic, outputName);
+                ConnieSerializer.SerializeObject(selectedPrefab, ObjectType.Generic, outputName, "");
             }
         }
 
