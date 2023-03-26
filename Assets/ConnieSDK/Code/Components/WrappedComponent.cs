@@ -104,6 +104,7 @@ namespace ConnieSDK
         public class MeshRendererJson: WrappedComponent
         {
             public Mesh? BaseMesh;
+            public string MeshName = string.Empty;
 
             public MeshRendererJson (MeshRenderer mr)
             {
@@ -111,9 +112,10 @@ namespace ConnieSDK
             }
 
             [JsonConstructor]
-            public MeshRendererJson(Mesh? BaseMesh)
+            public MeshRendererJson(Mesh? BaseMesh, string MeshName)
             {
                 this.BaseMesh = BaseMesh;
+                this.MeshName = MeshName;
             }
 
             public override void Attach(Transform to)
