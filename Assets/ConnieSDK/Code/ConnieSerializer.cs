@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using UnityEngine;
@@ -22,7 +21,11 @@ namespace ConnieSDK
     public static class ConnieSerializer
     {
         public static string AssetDirectory { get; private set; } =
+#if UNITY_EDITOR
+            Path.Join(Environment.CurrentDirectory, "Output");
+#elif UNITY_STANDALONE
             Path.Join(Environment.CurrentDirectory, "Assets");
+#endif
         public static readonly Dictionary<ObjectType, string> FileTypes = new Dictionary<ObjectType, string>
         {
             {ObjectType.Generic,"zip" },
@@ -51,6 +54,28 @@ namespace ConnieSDK
         }
 
 #if UNITY_EDITOR
+        public static bool SerializeObject(UnitData unit)
+        {
+            string fullpath = Path.Join(AssetDirectory, $"{unit.FileName}.{FileTypes[unit.Type]}");
+
+            TransformWrapper hierarchy = new TransformWrapper(unit.transform, 5, true, true);
+
+            using ArchiveWrapper archive = new ArchiveWrapper(fullpath, true);
+
+            if (archive.HasEntry("EmptyAsset"))
+                archive.DeleteEntry("EmptyAsset");
+
+            DateTime generationTime = DateTime.UtcNow;
+
+            string unitData = JsonSerializer.Serialize(unit, jsonOptions);
+            string hierarchyJson = JsonSerializer.Serialize(hierarchy, jsonOptions);
+
+            archive.WriteEntry("UnitData.json", unitData);
+            archive.WriteEntry("Hierarchy.json", hierarchyJson);
+
+            return true;
+        }
+
         public static bool SerializeObject(GameObject prefab, ObjectType type, string outputName)
         {
             string fullpath = Path.Join(AssetDirectory, $"{outputName}.{FileTypes[type]}");
@@ -80,16 +105,6 @@ namespace ConnieSDK
                 string hierarchyJson = JsonSerializer.Serialize(hierarchy, jsonOptions);
 
                 archive.WriteEntry("Hierarchy.json", hierarchyJson);
-                /*
-                archive.WriteEntry("Hierarchy.txt",
-                    $"WARNING: THIS FILE FORMAT IS TEMPORARY, DO NOT USE IT FOR LONG TERM DATA STORAGE\n\n" +
-                    $"ConnieSDK Unit Definition: Hierarchy\n" +
-                    $"{prefab.name}\n - " +
-                    string.Join("\n - ", hierarchy.Children.Select(x => x.Name)) + "\n" +
-                    $"Generated at {generationTime:yyyymmdd HH:mm:ss} UTC\n" +
-                    $"Using ConnieSDK version {Globals.Version}\n\n" +
-                    $"WARNING: THIS FILE FORMAT IS TEMPORARY, DO NOT USE IT FOR LONG TERM DATA STORAGE");
-                */
                 Debug.Log("Wrote Hierarchy...");
 
                 Debug.Log($"Archive now includes {archive.EntryNames.Length} entries");
