@@ -69,5 +69,26 @@ namespace ConnieSDK.Components
 
             return wrapped.ToArray();
         }
+
+        public Transform GenerateGameobjects (Transform? parent = null)
+        {
+            GameObject me = new GameObject(Name);
+            Transform tr = me.transform;
+
+            if (parent is Transform)
+                tr.SetParent(parent);
+
+            foreach(WrappedComponent wc in Components)
+            {
+                wc.Attach(tr);
+            }
+
+            foreach(TransformWrapper tw in Children)
+            {
+                tw.GenerateGameobjects(tr);
+            }
+
+            return tr;
+        }
     }
 }
