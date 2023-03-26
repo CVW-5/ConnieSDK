@@ -65,7 +65,10 @@ namespace ConnieSDK.Components
                     validComps.Add(wrappedComponent);
 
                 if (wrappedComponent is WrappedComponent.MeshRendererJson mrj)
+                {
                     mrj.StoreMesh(MeshCollection, Name);
+                }
+
             }
 
             return validComps.ToArray();
