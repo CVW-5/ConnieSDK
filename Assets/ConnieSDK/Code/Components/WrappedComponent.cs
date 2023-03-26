@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Text.Json.Serialization;
 using UnityEngine;
+using ConnieSDK.Meshes;
 
 #nullable enable
 namespace ConnieSDK
@@ -103,7 +104,9 @@ namespace ConnieSDK
 
         public class MeshRendererJson: WrappedComponent
         {
+            [JsonIgnore]
             public Mesh? BaseMesh;
+
             public string MeshName = string.Empty;
 
             public MeshRendererJson (MeshRenderer mr)
@@ -114,25 +117,27 @@ namespace ConnieSDK
             }
 
             [JsonConstructor]
-            public MeshRendererJson(Mesh? BaseMesh, string MeshName)
+            public MeshRendererJson(string MeshName)
             {
-                this.BaseMesh = BaseMesh;
                 this.MeshName = MeshName;
             }
 
-            public void StoreMesh (Meshes.MeshCollection? collection, string name)
+            public void StoreMesh (MeshCollection? collection, string name)
             {
                 if (BaseMesh is null || collection is null)
                     return;
 
                 collection[name] = BaseMesh;
+                MeshName = name;
             }
 
             public override void Attach(Transform to)
             {
                 MeshFilter mf = (MeshFilter)to.gameObject.AddComponent(typeof(MeshFilter));
                 MeshRenderer mr = (MeshRenderer)to.gameObject.AddComponent(typeof(MeshRenderer));
-                Debug.LogWarning($"Attached a MeshRenderer to {to.name} during deserialization, but there is no mesh handling yet!");
+
+                mf.sharedMesh = MeshLibrary.Current?[MeshName];
+                mr.sharedMaterial = Resources.Load("MISSING_MATERIAL") as Material;
             }
         }
     }
