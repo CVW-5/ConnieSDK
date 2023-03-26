@@ -23,6 +23,8 @@ namespace ConnieSDK
             };
         }
 
+        public abstract void Attach(Transform to);
+
         public class LightJson : WrappedComponent
         {
             public LightType Type;
@@ -37,6 +39,11 @@ namespace ConnieSDK
                 Radius = l.range;
                 Intensity = l.intensity;
             }
+
+            public override void Attach(Transform to)
+            {
+                throw new System.NotImplementedException();
+            }
         }
 
         public class ColliderJson: WrappedComponent
@@ -44,6 +51,11 @@ namespace ConnieSDK
             public ColliderJson(Collider c)
             {
 
+            }
+
+            public override void Attach(Transform to)
+            {
+                throw new System.NotImplementedException();
             }
         }
 
@@ -55,6 +67,11 @@ namespace ConnieSDK
             {
 
             }
+
+            public override void Attach(Transform to)
+            {
+                throw new System.NotImplementedException();
+            }
         }
 
         public class MeshRendererJson: WrappedComponent
@@ -64,6 +81,11 @@ namespace ConnieSDK
             public MeshRendererJson (MeshRenderer mr)
             {
 
+            }
+
+            public override void Attach(Transform to)
+            {
+                throw new System.NotImplementedException();
             }
         }
     }
