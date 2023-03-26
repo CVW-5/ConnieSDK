@@ -51,7 +51,12 @@ namespace ConnieSDK
 
             public override void Attach(Transform to)
             {
-                throw new System.NotImplementedException();
+                Light l = (Light)to.gameObject.AddComponent(typeof(Light));
+
+                l.type = Type;
+                l.color = Color;
+                l.range = Radius;
+                l.intensity = Intensity;
             }
         }
 
@@ -70,7 +75,8 @@ namespace ConnieSDK
 
             public override void Attach(Transform to)
             {
-                throw new System.NotImplementedException();
+                //throw new System.NotImplementedException();
+                Debug.LogError("Unable to Deserialize a collider - they're not yet implemented");
             }
         }
 
@@ -112,7 +118,9 @@ namespace ConnieSDK
 
             public override void Attach(Transform to)
             {
-                throw new System.NotImplementedException();
+                MeshFilter mf = (MeshFilter)to.gameObject.AddComponent(typeof(MeshFilter));
+                MeshRenderer mr = (MeshRenderer)to.gameObject.AddComponent(typeof(MeshRenderer));
+                Debug.LogWarning($"Attached a MeshRenderer to {to.name} during deserialization, but there is no mesh handling yet!");
             }
         }
     }
