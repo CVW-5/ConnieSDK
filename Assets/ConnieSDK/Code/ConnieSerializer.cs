@@ -100,9 +100,24 @@ namespace ConnieSDK
         }
 #endif
 
-        public static GameObject? DeserializeObject(string filepath, bool hideByDefault = true)
+        // Made an oopsie in the last commit.
+        public static Transform? DeserializeObject(string filepath, bool hideByDefault = true)
         {
-            return null;
+            using ArchiveWrapper archive = new ArchiveWrapper(filepath, false);
+
+            TransformWrapper? hierarchy = null;
+
+            if(archive.ReadEntry("Hierarchy.json", out string json))
+            {
+                hierarchy = JsonSerializer.Deserialize<TransformWrapper>(json, jsonOptions);
+            }
+
+            Transform? transform = hierarchy?.GenerateGameobjects();
+
+            if (hideByDefault)
+                transform?.gameObject.SetActive(false);
+
+            return transform;
         }
     }
 }

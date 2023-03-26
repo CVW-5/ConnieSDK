@@ -13,3 +13,6 @@ MonoBehaviour:
   m_Name: UnitSerSettings
   m_EditorClassIdentifier: 
   OutputDir: D:\projects\ConnieSDK\Output
+  CommonMaterials:
+  - {fileID: 2100000, guid: 88aa80bc59825214dac0a0aaf7d43b8b, type: 2}
+  CommonMeshes: []
