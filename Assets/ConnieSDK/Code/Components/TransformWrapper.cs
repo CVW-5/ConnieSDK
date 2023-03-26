@@ -26,9 +26,9 @@ namespace ConnieSDK.Components
         public bool IsEmpty => Components.Length == 0 && Children.Length == 0;
 
         [JsonIgnore]
-        private string MeshCollection;
+        private Meshes.MeshCollection? MeshCollection;
 
-        public TransformWrapper(Transform original, string MeshCollection, int maxDepth = 5, bool isRoot = false, bool includeEmpty = false)
+        public TransformWrapper(Transform original, int maxDepth = 5, bool isRoot = false, bool includeEmpty = false, Meshes.MeshCollection? MeshCollection = null)
         {
             this.MeshCollection = MeshCollection;
 
@@ -50,7 +50,6 @@ namespace ConnieSDK.Components
             this.Scale = Scale;
             this.Components = Components;
             this.Children = Children;
-            this.MeshCollection = string.Empty;
         }
 
         private WrappedComponent[] CollectComponents(Transform original, bool logInvalid = false)
@@ -82,7 +81,7 @@ namespace ConnieSDK.Components
 
             foreach(Transform t in children)
             {
-                var newWrapper = new TransformWrapper(t, MeshCollection, maxDepth);
+                var newWrapper = new TransformWrapper(t, maxDepth, MeshCollection:MeshCollection);
 
                 if (!newWrapper.IsEmpty || includeEmpty)
                     wrapped.Add(newWrapper);

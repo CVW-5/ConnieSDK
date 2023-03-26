@@ -60,7 +60,7 @@ namespace ConnieSDK
             string fullpath = Path.Join(AssetDirectory, $"{unit.FileName}.{FileTypes[unit.Type]}");
             MeshCollection mc = MeshLibrary.GetCollection(unit.MeshCollection) ?? MeshLibrary.AddCollection(unit.MeshCollection);
 
-            TransformWrapper hierarchy = new TransformWrapper(unit.transform, unit.MeshCollection, 5, true, true);
+            TransformWrapper hierarchy = new TransformWrapper(unit.transform, 5, true, true, mc);
 
             using ArchiveWrapper archive = new ArchiveWrapper(fullpath, true);
 
@@ -83,7 +83,7 @@ namespace ConnieSDK
             string fullpath = Path.Join(AssetDirectory, $"{outputName}.{FileTypes[type]}");
             Debug.Log($"Serializing a prefab to {fullpath}...");
 
-            TransformWrapper hierarchy = new TransformWrapper(prefab.transform, meshCollection, 5, true, true);
+            TransformWrapper hierarchy = new TransformWrapper(prefab.transform, 5, true, true);
             Debug.Log($"Hierarchy crawled, found {hierarchy.Components.Length} valid components and {hierarchy.Children.Length} direct children");
             
             using (ArchiveWrapper archive = new ArchiveWrapper(fullpath, true))

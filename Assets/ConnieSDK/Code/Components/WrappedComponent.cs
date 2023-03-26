@@ -120,12 +120,12 @@ namespace ConnieSDK
                 this.MeshName = MeshName;
             }
 
-            public void StoreMesh (string collection, string name)
+            public void StoreMesh (Meshes.MeshCollection? collection, string name)
             {
-                if (BaseMesh is null)
+                if (BaseMesh is null || collection is null)
                     return;
 
-                Meshes.MeshLibrary.SetMesh(collection, name, BaseMesh);
+                collection[name] = BaseMesh;
             }
 
             public override void Attach(Transform to)
