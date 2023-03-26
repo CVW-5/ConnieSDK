@@ -108,7 +108,9 @@ namespace ConnieSDK
 
             public MeshRendererJson (MeshRenderer mr)
             {
+                MeshFilter mf = (MeshFilter)mr.GetComponent(typeof(MeshFilter));
 
+                BaseMesh = mf.sharedMesh;
             }
 
             [JsonConstructor]
@@ -116,6 +118,14 @@ namespace ConnieSDK
             {
                 this.BaseMesh = BaseMesh;
                 this.MeshName = MeshName;
+            }
+
+            public void StoreMesh (string collection, string name)
+            {
+                if (BaseMesh is null)
+                    return;
+
+                MeshLibrary.SetMesh(collection, name, BaseMesh);
             }
 
             public override void Attach(Transform to)

@@ -25,8 +25,13 @@ namespace ConnieSDK.Components
         [JsonIgnore]
         public bool IsEmpty => Components.Length == 0 && Children.Length == 0;
 
-        public TransformWrapper(Transform original, int maxDepth = 5, bool isRoot = false, bool includeEmpty = false)
+        [JsonIgnore]
+        private string MeshCollection;
+
+        public TransformWrapper(Transform original, string MeshCollection, int maxDepth = 5, bool isRoot = false, bool includeEmpty = false)
         {
+            this.MeshCollection = MeshCollection;
+
             Name = original.name;
             Position = isRoot ? Vector3.zero : original.localPosition;
             Rotation = isRoot ? Vector3.zero : original.localEulerAngles;
@@ -45,6 +50,7 @@ namespace ConnieSDK.Components
             this.Scale = Scale;
             this.Components = Components;
             this.Children = Children;
+            this.MeshCollection = string.Empty;
         }
 
         private WrappedComponent[] CollectComponents(Transform original, bool logInvalid = false)
@@ -60,6 +66,10 @@ namespace ConnieSDK.Components
                 {
                     validComps.Add(wrappedComponent);
                 }
+                if(wrappedComponent is WrappedComponent.MeshRendererJson mrj)
+                {
+                    mrj.StoreMesh(MeshCollection, Name);
+                }
             }
 
             return validComps.ToArray();
@@ -72,7 +82,7 @@ namespace ConnieSDK.Components
 
             foreach(Transform t in children)
             {
-                var newWrapper = new TransformWrapper(t, maxDepth);
+                var newWrapper = new TransformWrapper(t, MeshCollection, maxDepth);
 
                 if (!newWrapper.IsEmpty || includeEmpty)
                     wrapped.Add(newWrapper);
