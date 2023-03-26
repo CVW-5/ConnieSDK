@@ -19,7 +19,7 @@ namespace ConnieSDK
         public ArchiveWrapper(string filepath, bool createIfNotExists = true)
         {
             if (!File.Exists(filepath) && !createIfNotExists)
-                return;
+                throw new FileNotFoundException($"The file at {filepath} not exist!");
 
             OpenArchive(filepath, false);
         }
