@@ -9,6 +9,7 @@ namespace ConnieSDK.Meshes
     public static class MeshLibrary
     {
         private static Dictionary<string, MeshCollection> collections = new Dictionary<string, MeshCollection>();
+        public static MeshCollection? Current = null;
 
         public static MeshCollection AddCollection (string name)
         {
@@ -16,6 +17,17 @@ namespace ConnieSDK.Meshes
                 throw new Exception($"The mesh collection {name} already exists!");
 
             MeshCollection mc = new MeshCollection();
+            collections[name] = mc;
+
+            return mc;
+        }
+
+        public static MeshCollection AddFromJson (string name, string json)
+        {
+            if(collections.ContainsKey(name))
+                throw new Exception($"The mesh collection {name} already exists!");
+
+            MeshCollection mc = new MeshCollection(json);
             collections[name] = mc;
 
             return mc;
