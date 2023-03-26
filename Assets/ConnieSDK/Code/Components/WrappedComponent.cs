@@ -40,6 +40,15 @@ namespace ConnieSDK
                 Intensity = l.intensity;
             }
 
+            [JsonConstructor]
+            public LightJson(LightType Type, Color Color, float Radius, float Intensity)
+            {
+                this.Type = Type;
+                this.Color = Color;
+                this.Radius = Radius;
+                this.Intensity = Intensity;
+            }
+
             public override void Attach(Transform to)
             {
                 throw new System.NotImplementedException();
@@ -49,6 +58,12 @@ namespace ConnieSDK
         public class ColliderJson: WrappedComponent
         {
             public ColliderJson(Collider c)
+            {
+
+            }
+
+            [JsonConstructor]
+            public ColliderJson()
             {
 
             }
@@ -68,6 +83,12 @@ namespace ConnieSDK
 
             }
 
+            [JsonConstructor]
+            public AudioJson(AudioClip? Clip)
+            {
+                this.Clip = Clip;
+            }
+
             public override void Attach(Transform to)
             {
                 throw new System.NotImplementedException();
@@ -81,6 +102,12 @@ namespace ConnieSDK
             public MeshRendererJson (MeshRenderer mr)
             {
 
+            }
+
+            [JsonConstructor]
+            public MeshRendererJson(Mesh? BaseMesh)
+            {
+                this.BaseMesh = BaseMesh;
             }
 
             public override void Attach(Transform to)

@@ -36,6 +36,17 @@ namespace ConnieSDK.Components
             Children = CollectChildren(original, maxDepth - 1, includeEmpty);
         }
 
+        [JsonConstructor]
+        public TransformWrapper (string Name, Vector3 Position, Quaternion Rotation, Vector3 Scale, WrappedComponent[] Components, TransformWrapper[] Children)
+        {
+            this.Name = Name;
+            this.Position = Position;
+            this.Rotation = Rotation;
+            this.Scale = Scale;
+            this.Components = Components;
+            this.Children = Children;
+        }
+
         private WrappedComponent[] CollectComponents(Transform original, bool logInvalid = false)
         {
             Component[] comps = original.GetComponents(typeof(Component));
