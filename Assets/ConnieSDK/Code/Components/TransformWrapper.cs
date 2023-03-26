@@ -12,7 +12,7 @@ namespace ConnieSDK.Components
         [JsonInclude]
         public Vector3 Position;
         [JsonInclude]
-        public Quaternion Rotation;
+        public Vector3 Rotation;
         [JsonInclude]
         public Vector3 Scale;
 
@@ -29,15 +29,15 @@ namespace ConnieSDK.Components
         {
             Name = original.name;
             Position = isRoot ? Vector3.zero : original.localPosition;
-            Rotation = isRoot ? Quaternion.identity : original.localRotation;
-            Scale = new Vector3(1, 1, 1);
+            Rotation = isRoot ? Vector3.zero : original.localEulerAngles;
+            Scale = isRoot ? Vector3.one : original.localScale;
 
             Components = CollectComponents(original, false);
             Children = CollectChildren(original, maxDepth - 1, includeEmpty);
         }
 
         [JsonConstructor]
-        public TransformWrapper (string Name, Vector3 Position, Quaternion Rotation, Vector3 Scale, WrappedComponent[] Components, TransformWrapper[] Children)
+        public TransformWrapper (string Name, Vector3 Position, Vector3 Rotation, Vector3 Scale, WrappedComponent[] Components, TransformWrapper[] Children)
         {
             this.Name = Name;
             this.Position = Position;
@@ -88,6 +88,10 @@ namespace ConnieSDK.Components
 
             if (parent is Transform)
                 tr.SetParent(parent);
+
+            tr.localPosition = Position;
+            tr.localEulerAngles = Rotation;
+            tr.localScale = Scale;
 
             foreach(WrappedComponent wc in Components)
             {
