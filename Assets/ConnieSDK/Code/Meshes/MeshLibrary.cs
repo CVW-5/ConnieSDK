@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 
 #nullable enable
-namespace ConnieSDK
+namespace ConnieSDK.Meshes
 {
     public static class MeshLibrary
     {

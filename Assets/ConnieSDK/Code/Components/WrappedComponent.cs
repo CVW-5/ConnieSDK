@@ -125,7 +125,7 @@ namespace ConnieSDK
                 if (BaseMesh is null)
                     return;
 
-                MeshLibrary.SetMesh(collection, name, BaseMesh);
+                Meshes.MeshLibrary.SetMesh(collection, name, BaseMesh);
             }
 
             public override void Attach(Transform to)

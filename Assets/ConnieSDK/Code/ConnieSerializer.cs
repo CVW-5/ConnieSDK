@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using UnityEngine;
 using ConnieSDK.Components;
+using ConnieSDK.Meshes;
 
 #nullable enable
 namespace ConnieSDK
