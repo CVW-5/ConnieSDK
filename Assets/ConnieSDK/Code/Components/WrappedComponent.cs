@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Text.Json.Serialization;
+using UnityEngine;
 
+#nullable enable
 namespace ConnieSDK
 {
     [JsonDerivedType(typeof(LightJson), "Light")]
@@ -9,14 +11,26 @@ namespace ConnieSDK
     [JsonDerivedType(typeof(MeshRendererJson), "Mesh")]
     public abstract class WrappedComponent
     {
+        public static WrappedComponent? Auto (Component comp)
+        {
+            return comp switch
+            {
+                Light l => new LightJson(l),
+                Collider c and not MeshCollider => new ColliderJson(c),
+                AudioSource audio => new AudioJson(audio),
+                MeshRenderer mesh => new MeshRendererJson(mesh),
+                _ => null
+            };
+        }
+
         public class LightJson : WrappedComponent
         {
-            public UnityEngine.LightType Type;
-            public UnityEngine.Color Color;
+            public LightType Type;
+            public Color Color;
             public float Radius;
             public float Intensity;
 
-            public LightJson(UnityEngine.Light l)
+            public LightJson(Light l)
             {
                 Type = l.type;
                 Color = l.color;
@@ -27,7 +41,7 @@ namespace ConnieSDK
 
         public class ColliderJson: WrappedComponent
         {
-            public ColliderJson(UnityEngine.Collider c)
+            public ColliderJson(Collider c)
             {
 
             }
@@ -35,9 +49,9 @@ namespace ConnieSDK
 
         public class AudioJson: WrappedComponent
         {
-            public UnityEngine.AudioClip Clip;
+            public AudioClip? Clip;
 
-            public AudioJson(UnityEngine.AudioSource a)
+            public AudioJson(AudioSource a)
             {
 
             }
@@ -45,9 +59,9 @@ namespace ConnieSDK
 
         public class MeshRendererJson: WrappedComponent
         {
-            public UnityEngine.Mesh BaseMesh;
+            public Mesh? BaseMesh;
 
-            public MeshRendererJson (UnityEngine.MeshRenderer mr)
+            public MeshRendererJson (MeshRenderer mr)
             {
 
             }
