@@ -14,6 +14,12 @@ namespace ConnieSDK
         [SerializeField]
         private Light? Sun;
 
+        [Space(), Header("Gradients")]
+        [SerializeField]
+        SunSkyColorData? ColorData;
+
+
+        [Space(), Header("Map Details")]
         [Range(-180, 180), SerializeField]
         private float NorthOffset = 0;
         [Range(-90,90), SerializeField]
@@ -44,7 +50,16 @@ namespace ConnieSDK
                 return;
             }
 
+            if(ColorData is null)
+            {
+                SunSkyColors? _colorPalette = (SunSkyColors)Resources.Load("DefaultSky");
+
+                ColorData = _colorPalette.Colors ?? throw new KeyNotFoundException("Unable to locate DefaultSky resource!");
+            }
+
             TimeSource.TimeUpdates += UpdateTOD;
+
+            RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Trilight;
         }
 
         public void UpdateTOD(float newTOD)
@@ -52,7 +67,7 @@ namespace ConnieSDK
             TimeOfDay = newTOD;
 
             MoveSun();
-            UpdateSky();
+            UpdateColors();
         }
 
         private void Update()
@@ -60,7 +75,7 @@ namespace ConnieSDK
             if (!RunOnUpdate) return;
 
             MoveSun();
-            UpdateSky();
+            UpdateColors();
         }
 
         private void MoveSun ()
@@ -80,18 +95,30 @@ namespace ConnieSDK
             return baseAngle * Quaternion.Euler(progressionAngle, 0, 0);
         }
 
-        private void UpdateSky ()
+        private void UpdateColors ()
         {
-            if (SkyMaterial is null) return;
-            if (!SkyMaterial.HasProperty("SunHeight"))
+            if (SkyMaterial is null || ColorData is null) return;
+            if (!SkyMaterial.HasProperty("HorizonCol") || !SkyMaterial.HasProperty("ZenithCol"))
             {
-                Debug.LogWarning("Material doesn't have a field \"SunHeight\"");
+                Debug.LogWarning("Material doesn't have a field \"HorizonCol\" or \"ZenithCol\"! These are required for proper behavior");
                 return;
             }
 
             float sunheight = TimeOfDay < 0.5f ? TimeOfDay * 2 : -2* TimeOfDay + 2;
 
-            SkyMaterial.SetFloat("SunHeight", sunheight);
+            Color horizon = ColorData.Horizon.Evaluate(sunheight);
+            Color zenith = ColorData.Zenith.Evaluate(sunheight);
+
+            SkyMaterial.SetColor("HorizonCol", horizon);
+            SkyMaterial.SetColor("ZenithCol", zenith);
+
+            if (Sun is null) return;
+
+            Sun.color = ColorData.Sun.Evaluate(sunheight);
+
+            RenderSettings.ambientEquatorColor = horizon;
+            RenderSettings.ambientGroundColor = horizon;
+            RenderSettings.ambientSkyColor = zenith;
         }
     }
 }
