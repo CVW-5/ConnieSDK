@@ -5,6 +5,7 @@ using UnityEngine;
 #nullable enable
 namespace ConnieSDK
 {
+    [ExecuteInEditMode]
     public class SunAndSkyController : MonoBehaviour
     {
         public static SunAndSkyController? Singleton;
@@ -31,6 +32,15 @@ namespace ConnieSDK
         [SerializeField]
         private TimeSource? TimeSource;
         private bool RunOnUpdate = false;
+
+        private bool IsEditor
+        {
+#if UNITY_EDITOR
+            get => true;
+#else
+            get => false;
+#endif
+        }
 
         // Start is called before the first frame update
         void Start()
@@ -72,7 +82,7 @@ namespace ConnieSDK
 
         private void Update()
         {
-            if (!RunOnUpdate) return;
+            if (!RunOnUpdate && !IsEditor) return;
 
             MoveSun();
             UpdateColors();
