@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using UnityEngine;
 using ConnieSDK.Components;
+using ConnieSDK.Meshes;
 
 #nullable enable
 namespace ConnieSDK
@@ -29,8 +30,8 @@ namespace ConnieSDK
         public static readonly Dictionary<ObjectType, string> FileTypes = new Dictionary<ObjectType, string>
         {
             {ObjectType.Generic,"zip" },
-            {ObjectType.Unit, "cwu" },
-            {ObjectType.Store,"cwu" },
+            {ObjectType.Unit, "zip" },
+            {ObjectType.Store,"zip" },
             {ObjectType.MapData,"cwmap" },
             {ObjectType.Mission,"cwmis" },
         };
@@ -54,11 +55,12 @@ namespace ConnieSDK
         }
 
 #if UNITY_EDITOR
-        public static bool SerializeObject(UnitData unit)
+        public static bool SerializeObject(UnitDefinition unit, Transform transform)
         {
             string fullpath = Path.Join(AssetDirectory, $"{unit.FileName}.{FileTypes[unit.Type]}");
+            MeshCollection mc = MeshLibrary.GetCollection(unit.MeshCollection) ?? MeshLibrary.AddCollection(unit.MeshCollection);
 
-            TransformWrapper hierarchy = new TransformWrapper(unit.transform, 5, true, true);
+            TransformWrapper hierarchy = new TransformWrapper(transform, 5, true, true, mc);
 
             using ArchiveWrapper archive = new ArchiveWrapper(fullpath, true);
 
@@ -69,14 +71,18 @@ namespace ConnieSDK
 
             string unitData = JsonSerializer.Serialize(unit, jsonOptions);
             string hierarchyJson = JsonSerializer.Serialize(hierarchy, jsonOptions);
+            string meshData = mc.ToJson();
 
             archive.WriteEntry("UnitData.json", unitData);
             archive.WriteEntry("Hierarchy.json", hierarchyJson);
 
+            if (unit.MeshWriting == MeshWriteMode.Bundle)
+                archive.WriteEntry("Meshes.json", meshData);
+
             return true;
         }
 
-        public static bool SerializeObject(GameObject prefab, ObjectType type, string outputName)
+        public static bool SerializeObject(GameObject prefab, ObjectType type, string outputName, string meshCollection)
         {
             string fullpath = Path.Join(AssetDirectory, $"{outputName}.{FileTypes[type]}");
             Debug.Log($"Serializing a prefab to {fullpath}...");
@@ -116,16 +122,29 @@ namespace ConnieSDK
 #endif
 
         // Made an oopsie in the last commit.
-        public static Transform? DeserializeObject(string filepath, bool hideByDefault = true)
+        public static Transform? DeserializeObject(string filename, bool hideByDefault = true)
         {
-            using ArchiveWrapper archive = new ArchiveWrapper(filepath, false);
+            string fullpath = Path.Join(AssetDirectory, $"{filename}.zip");
 
+            using ArchiveWrapper archive = new ArchiveWrapper(fullpath, false);
+
+            UnitDefinition? data = null;
+            MeshCollection? meshes = null;
             TransformWrapper? hierarchy = null;
 
-            if(archive.ReadEntry("Hierarchy.json", out string json))
+            if (archive.ReadEntry("UnitData.json", out string unitjson))
+                data = JsonSerializer.Deserialize<UnitDefinition>(unitjson, jsonOptions);
+
+            if(data is null)
             {
-                hierarchy = JsonSerializer.Deserialize<TransformWrapper>(json, jsonOptions);
+                Debug.LogError($"No unit definition was found in {filename}.zip. Skipping.");
+                return null;
             }
+
+            meshes = FindMeshes(data, archive, AssetDirectory);
+
+            if(archive.ReadEntry("Hierarchy.json", out string hierarchyjson))
+                hierarchy = JsonSerializer.Deserialize<TransformWrapper>(hierarchyjson, jsonOptions);
 
             Transform? transform = hierarchy?.GenerateGameobjects();
 
@@ -133,6 +152,29 @@ namespace ConnieSDK
                 transform?.gameObject.SetActive(false);
 
             return transform;
+        }
+
+        private static MeshCollection FindMeshes (UnitDefinition data, ArchiveWrapper archive, string rootfolder)
+        {
+            // Meshes are bundled within the unit file
+            if(data.MeshWriting == MeshWriteMode.Bundle)
+            {
+                if(archive.ReadEntry("Meshes.json", out string meshjson))
+                {
+                    MeshCollection mc = MeshLibrary.AddFromJson(data.UnitName, meshjson);
+                    MeshLibrary.Current = mc;
+                    return mc;
+                }
+            }
+            // Meshes are written to an external file, we must find them externally
+            else if (data.MeshWriting == MeshWriteMode.Write && data.MeshCollection != string.Empty)
+            {
+                throw new NotImplementedException();
+            }
+
+            // The unit doesn't know where its meshes are stored. Oops!
+            throw new FileNotFoundException(
+                $"Unit {data.UnitName} does not have any mesh collections defined! This is a problem!");
         }
     }
 }
