@@ -5,7 +5,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "e6f3f800b03f1b880fa6f3a6c70cedcc2eef393a"
+      "hash": "780abdcc5baa7209bedea2603e9be4ab3d3b5c28"
     },
     "com.unity.burst": {
       "version": "1.8.2",
@@ -42,7 +42,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.visualstudio": {
-      "version": "2.0.17",
+      "version": "2.0.18",
       "depth": 0,
       "source": "registry",
       "dependencies": {

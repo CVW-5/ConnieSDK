@@ -33,24 +33,18 @@ namespace ConnieSDK
         private TimeSource? TimeSource;
         private bool RunOnUpdate = false;
 
-        private bool IsEditor
-        {
-#if UNITY_EDITOR
-            get => true;
-#else
-            get => false;
-#endif
-        }
+        [SerializeField]
+        private bool ForcePlay = false;
 
         // Start is called before the first frame update
         void Start()
         {
-            if(Singleton is not null)
+            /*if(Singleton is not null)
             {
                 Debug.LogWarning("Multiple SunAndSkyControllers exist! Deactivating duplicates; please ensure only one exists in the scene!", this);
                 enabled = false;
                 return;
-            }
+            }*/
 
             Singleton = this;
 
@@ -82,7 +76,7 @@ namespace ConnieSDK
 
         private void Update()
         {
-            if (!RunOnUpdate && !IsEditor) return;
+            if (!RunOnUpdate && !ForcePlay) return;
 
             MoveSun();
             UpdateColors();
