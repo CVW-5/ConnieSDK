@@ -77,3 +77,4 @@ crashlytics-build.properties
 # Assets specifically for testing purposes
 /[Aa]ssets/[Tt]esting/
 /[Aa]ssets/[Tt]esting.meta
+/*.log
