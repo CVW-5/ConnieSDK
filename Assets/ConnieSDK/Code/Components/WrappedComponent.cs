@@ -1,15 +1,15 @@
 using System.Collections;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 using UnityEngine;
 using ConnieSDK.Meshes;
 
 #nullable enable
 namespace ConnieSDK
 {
-    [JsonDerivedType(typeof(LightJson), "Light")]
-    [JsonDerivedType(typeof(ColliderJson), "Collider")]
-    [JsonDerivedType(typeof(AudioJson), "Audio")]
-    [JsonDerivedType(typeof(MeshRendererJson), "Mesh")]
+    //[JsonKnownType(typeof(LightJson), "Light")]
+    //[JsonDerivedType(typeof(ColliderJson), "Collider")]
+    //[JsonDerivedType(typeof(AudioJson), "Audio")]
+    //[JsonDerivedType(typeof(MeshRendererJson), "Mesh")]
     public abstract class WrappedComponent
     {
         public static WrappedComponent? Auto (Component comp)

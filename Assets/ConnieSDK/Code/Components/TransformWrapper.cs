@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 using UnityEngine;
 
 #nullable enable
@@ -7,19 +7,19 @@ namespace ConnieSDK.Components
 {
     public class TransformWrapper
     {
-        [JsonInclude]
+        [JsonProperty]
         public string Name;
-        [JsonInclude]
+        [JsonProperty]
         public Vector3 Position;
-        [JsonInclude]
+        [JsonProperty]
         public Vector3 Rotation;
-        [JsonInclude]
+        [JsonProperty]
         public Vector3 Scale;
 
-        [JsonInclude]
+        [JsonProperty]
         public WrappedComponent[] Components;
 
-        [JsonInclude]
+        [JsonProperty]
         public TransformWrapper[] Children;
 
         [JsonIgnore]

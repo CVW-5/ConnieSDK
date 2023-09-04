@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Text.Json;
+using Newtonsoft.Json;
 
 namespace ConnieSDK.Meshes
 {
@@ -13,7 +13,7 @@ namespace ConnieSDK.Meshes
 
         public MeshCollection(string json)
         {
-            List<JsonMesh> jsonMeshes = JsonSerializer.Deserialize<List<JsonMesh>>(json, ConnieSerializer.jsonOptions);
+            List<JsonMesh> jsonMeshes = JsonConvert.DeserializeObject<List<JsonMesh>>(json, ConnieSerializer.jsonOptions) ?? new List<JsonMesh>();
 
             foreach (JsonMesh jm in jsonMeshes)
                 meshes.Add(jm.Name, jm.ToUnityMesh());
@@ -32,7 +32,7 @@ namespace ConnieSDK.Meshes
             foreach (KeyValuePair<string, Mesh> kvp in meshes)
                 jsonMeshes.Add(new JsonMesh(kvp.Key, kvp.Value));
 
-            return JsonSerializer.Serialize(jsonMeshes, ConnieSerializer.jsonOptions);
+            return JsonConvert.SerializeObject(jsonMeshes, ConnieSerializer.jsonOptions);
         }
     }
 }

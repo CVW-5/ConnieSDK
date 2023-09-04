@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
+//using System.Text.Json;
+//using System.Text.Json.Serialization;
 using UnityEngine;
 using ConnieSDK.Components;
 using ConnieSDK.Meshes;
@@ -36,14 +37,16 @@ namespace ConnieSDK
             {ObjectType.Mission,"cwmis" },
         };
 
-        public static readonly JsonSerializerOptions jsonOptions = new JsonSerializerOptions
+        public static readonly JsonSerializerSettings jsonOptions = new JsonSerializerSettings
         {
-            AllowTrailingCommas = true,
-            WriteIndented = true,
-            NumberHandling = JsonNumberHandling.AllowReadingFromString,
-            IncludeFields = true,
-            IgnoreReadOnlyFields = true,
-            IgnoreReadOnlyProperties = true,
+            TypeNameHandling = TypeNameHandling.Objects,
+
+            //AllowTrailingCommas = true,
+            //WriteIndented = true,
+            //NumberHandling = JsonNumberHandling.AllowReadingFromString,
+            //IncludeFields = true,
+            //IgnoreReadOnlyFields = true,
+            //IgnoreReadOnlyProperties = true,
         };
 
         public static void SetAssetDirectory(string path)
@@ -69,8 +72,8 @@ namespace ConnieSDK
 
             DateTime generationTime = DateTime.UtcNow;
 
-            string unitData = JsonSerializer.Serialize(unit, jsonOptions);
-            string hierarchyJson = JsonSerializer.Serialize(hierarchy, jsonOptions);
+            string unitData = JsonConvert.SerializeObject(unit, jsonOptions);
+            string hierarchyJson = JsonConvert.SerializeObject(hierarchy, jsonOptions);
             string meshData = mc.ToJson();
 
             archive.WriteEntry("UnitData.json", unitData);
@@ -108,7 +111,7 @@ namespace ConnieSDK
                     $"WARNING: THIS FILE FORMAT IS TEMPORARY, DO NOT USE IT FOR LONG TERM DATA STORAGE");
                 Debug.Log("Wrote Unit Data...");
 
-                string hierarchyJson = JsonSerializer.Serialize(hierarchy, jsonOptions);
+                string hierarchyJson = JsonConvert.SerializeObject(hierarchy, jsonOptions);
 
                 archive.WriteEntry("Hierarchy.json", hierarchyJson);
                 Debug.Log("Wrote Hierarchy...");
@@ -133,7 +136,7 @@ namespace ConnieSDK
             TransformWrapper? hierarchy = null;
 
             if (archive.ReadEntry("UnitData.json", out string unitjson))
-                data = JsonSerializer.Deserialize<UnitDefinition>(unitjson, jsonOptions);
+                data = JsonConvert.DeserializeObject<UnitDefinition>(unitjson, jsonOptions);
 
             if(data is null)
             {
@@ -144,7 +147,7 @@ namespace ConnieSDK
             meshes = FindMeshes(data, archive, AssetDirectory);
 
             if(archive.ReadEntry("Hierarchy.json", out string hierarchyjson))
-                hierarchy = JsonSerializer.Deserialize<TransformWrapper>(hierarchyjson, jsonOptions);
+                hierarchy = JsonConvert.DeserializeObject<TransformWrapper>(hierarchyjson, jsonOptions);
 
             Transform? transform = hierarchy?.GenerateGameobjects();
 

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using UnityEngine;
 
 #nullable enable
@@ -27,7 +28,7 @@ namespace ConnieSDK
             UV2 = original.uv3;
         }
 
-        [System.Text.Json.Serialization.JsonConstructor]
+        [JsonConstructor]
         public JsonMesh(string Name, Vector3[] Vertices, int[] Tris, Vector3[] Normals, Vector2[] UV0, Vector2[] UV1, Vector2[] UV2)
         {
             this.Name = Name;
