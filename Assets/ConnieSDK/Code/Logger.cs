@@ -99,6 +99,28 @@ namespace ConnieSDK
             
         }
 
+        public static void Write(string message, LogType Priority = LogType.Log, bool LogToUnity = false)
+        {
+            switch (Priority)
+            {
+                case LogType.Log:
+                    Log(message, LogToUnity);
+                    break;
+                case LogType.Warning:
+                    LogWarning(message, LogToUnity);
+                    break;
+                case LogType.Error:
+                    LogError(message, LogToUnity);
+                    break;
+                case LogType.Exception:
+                    LogException(message, LogToUnity);
+                    break;
+                default:
+                    Debug.LogError($"The ConnieSDK Logger.Write() function does not support logging of {Priority}s at this time. Inner log message:\n{message}");
+                    break;
+            };
+        }
+
         public static void Log (string message, bool LogToUnity = true)
         {
             PrintMessage(message, LogType.Log);
