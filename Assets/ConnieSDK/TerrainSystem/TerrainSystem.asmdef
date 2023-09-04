@@ -1,0 +1,16 @@
+{
+    "name": "CVWTerrain",
+    "rootNamespace": "CVWTerrain",
+    "references": [
+        "GUID:5f42024c77c5aa7468295904c1947a2c"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
